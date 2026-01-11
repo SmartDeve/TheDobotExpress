@@ -10,3 +10,9 @@ if struct.calcsize("P") * 8 != 32:
 from .DobotExpress import DobotExpress
 from .manager import DobotManager
 from .proxy import DobotProxy
+
+__all__ = [
+    "DobotExpress",
+    "DobotManager",
+    "DobotProxy"
+]
