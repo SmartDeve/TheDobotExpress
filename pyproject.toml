@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >= 1.26"]
+requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
@@ -11,14 +11,20 @@ authors = [
 description = "A compact library to control the Dobot Magician"
 readme = "README.md"
 requires-python = ">=3.9"
+license = { file = "LICENSE" }
 classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python :: 3",
     "Environment :: Win32 (MS Windows)",
+    "License :: OSI Approved :: MIT License",
 ]
-license = "MIT"
-license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "pyserial",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dobotexpress"]
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Homepage = "https://github.com/SmartDeve/TheDobotExpress"
+Issues = "https://github.com/SmartDeve/TheDobotExpress/issues"
