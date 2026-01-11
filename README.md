@@ -1,13 +1,13 @@
 
 # DobotExpress
 
-DobotExpress is a high-level Python-based control framework designed to simplify, accelerate, and scale automation workflows using Dobot robotic arms. This library is built upon the original DobotDll.dll which is shipped with Dobot Studio whose last release was in 2019. 
+DobotExpress is a high-level Python-based control framework designed to simplify, accelerate, and scale automation workflows using Dobot Magician. This library is built upon the original DobotDll.dll which is shipped with Dobot Studio whose last release was in 2019. 
 
 DobotExpress aims to provide full functionality similar to the DobotStudio. This library was created in the wake of limited functionality of the previous wrapper libraries available out in the open.
 
-The library is still under development and will be added with more functionalities with time.
+The library is still under development and will be added with more functionalities with time. Here is what a Dobot Magician looks like:
 
-
+<img src="https://github.com/user-attachments/assets/008443a7-da8a-43fc-a623-339e0b46e896" width="60%">
 
 
 
@@ -19,6 +19,11 @@ The library is still under development and will be added with more functionaliti
 
 ## Setting up
 
+Install the package using pip:
+
+```
+pip install dobotexpress
+```
 
 ## Initialize
 
@@ -40,6 +45,9 @@ This library currently does not support Alarms, so you need to use DobotStudio t
 The DobotDll.dll had a limitation where only a single Dobot could be controlled within a Python environment. To overcome this constraint, we introduced DobotManager, which assigns dedicated worker threads to independently initialize and manage multiple Dobot devices.
 
 The diagram below illustrates the internal architecture and workflow of DobotExpress..
+
+<img width="960" height="540" alt="DobotExpress" src="https://github.com/user-attachments/assets/2450ecf8-46e7-4dd9-a69d-2b864280c797" />
+
 
 ## Methods
 
