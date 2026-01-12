@@ -3,8 +3,7 @@ import os
 import time
 import sys
 from enum import IntEnum
-# 1. DEFINE THE DANGEROUS FOLDER
-# We point to it, but we don't run inside it.
+
 
 dobot_studio_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -75,15 +74,12 @@ def ConnectDobot(api, portName,  baudrate):
         raise DobotError("Dobot Not Found")
     elif result is DobotConnect.DobotConnect_Occupied:
         raise DobotError("Dobot is busy, check serial port!")
-# --- STEP 3: CONFIGURE MOTION PARAMETERS ---
 
-# 1. DEFINE THE C STRUCTURES
-# These tell Python how to format the data so the C DLL understands it.
 
 
 class PTPJointParams(ctypes.Structure):
-    _fields_ = [("velocity", ctypes.c_float * 4),      # Array of 4 floats
-                ("acceleration", ctypes.c_float * 4)]   # Array of 4 floats
+    _fields_ = [("velocity", ctypes.c_float * 4),     
+                ("acceleration", ctypes.c_float * 4)]  
 
 
 class PTPCoordinateParams(ctypes.Structure):
@@ -102,8 +98,6 @@ class PTPCommonParams(ctypes.Structure):
     _fields_ = [("velocityRatio", ctypes.c_float),
                 ("accelerationRatio", ctypes.c_float)]
 
-# 2. DEFINE FUNCTION SIGNATURES
-# Common arguments for all: (StructPointer, isQueued, QueuedIndexPointer)
 
 
 def setCartisianSpeed(api, velocity, acceleration):
@@ -129,7 +123,7 @@ class PTPJointParams(ctypes.Structure):
 
 
 def setJointsSpeed(api, velocity, acc):
-    # Define Signature
+  
     api.SetPTPJointParams.argtypes = [
         ctypes.POINTER(PTPJointParams),
         ctypes.c_bool,
@@ -137,16 +131,15 @@ def setJointsSpeed(api, velocity, acc):
     ]
     api.SetPTPJointParams.restype = ctypes.c_int
 
-    # Create Structure
+   
     joint_params = PTPJointParams()
-    # Fill arrays: [J1, J2, J3, J4]
+  
     joint_params.velocity[:] = [float(velocity)] * 4
     joint_params.acceleration[:] = [float(acc)] * 4
 
-    # Create Index Bucket
     queuedCmdIndex = ctypes.c_uint64(0)
 
-    # Send Command (isQueued = True)
+   
     ret = api.SetPTPJointParams(
         ctypes.byref(joint_params),
         True,
@@ -154,10 +147,10 @@ def setJointsSpeed(api, velocity, acc):
     )
 
     if ret == 0:
-        # EXECUTE QUEUE
+
         api.SetQueuedCmdStartExec()
         print(f">>> Joint Speed Set to {velocity}/{acc}")
-        return queuedCmdIndex.value  # Return the integer ID
+        return queuedCmdIndex.value 
     else:
         print(f">>> ERROR: Failed to set joint speed (Code {ret})")
         return 0
@@ -204,7 +197,7 @@ class Pose(ctypes.Structure):
         ("y", ctypes.c_float),
         ("z", ctypes.c_float),
         ("r", ctypes.c_float),
-        # Array of 4 floats for J1, J2, J3, J4
+
         ("jointAngle", ctypes.c_float * 4)
     ]
 
@@ -215,11 +208,10 @@ def getPose(api):
 
     print("Reading current position...")
     current_pose = Pose()
-    # 4. CALL THE FUNCTION
-    # We pass 'byref' (pointer) so the DLL can write the data INTO our object.
+
     result = api.GetPose(ctypes.byref(current_pose))
 
-    if result == 0:  # 0 usually means success for GetPose
+    if result == 0:
         return {
             "x": current_pose.x,
             "y": current_pose.y,
@@ -234,8 +226,7 @@ def getPose(api):
         raise DobotError("Failed to get Pose, there is something wrong")
 
 
-# 2. DEFINE FUNCTION SIGNATURE
-# Arguments: (Pointer to Struct, isQueued, Pointer to Index)
+
 class HOMECmd(ctypes.Structure):
     _fields_ = [("temp", ctypes.c_int)]
 
@@ -329,7 +320,7 @@ class PTPCmd(ctypes.Structure):
         ("gripper", ctypes.c_float)
     ]
 
-# --- DEFINE RAIL PARAMETERS CLASS ---
+
 
 
 class PTPLParams(ctypes.Structure):
@@ -401,19 +392,18 @@ class EMotor(ctypes.Structure):
 
 
 def moveConveyer(api, is_enabled, speed):
-    # Calculate velocity (Keep your existing math)
+
     STEP_PER_CRICLE = 360.0 / 1.8 * 10.0 * 16.0
     MM_PER_CRICLE = 3.1415926535898 * 36.0
     vel = float(speed) * STEP_PER_CRICLE / MM_PER_CRICLE
 
-    # 2. Create the Structure Object
+
     emotor = EMotor()
-    emotor.index = 0        # 0 for Port E1, 1 for Port E2
+    emotor.index = 0       
     emotor.isEnabled = 1 if is_enabled else 0
     emotor.speed = int(vel)  # Must be Integer
 
-    # 3. Configure the DLL Function Signature
-    # It expects: (Pointer to EMotor, Boolean isQueued, Pointer to index)
+
     api.SetEMotor.argtypes = [
         ctypes.POINTER(EMotor),
         ctypes.c_bool,
@@ -421,10 +411,10 @@ def moveConveyer(api, is_enabled, speed):
     ]
     api.SetEMotor.restype = ctypes.c_int
 
-    # 4. Call the function using the Structure
+
     queuedCmdIndex = ctypes.c_uint64(0)
 
-    # Note: 'byref(emotor)' passes the structure pointer
+
     ret = api.SetEMotor(ctypes.byref(emotor), False,
                         ctypes.byref(queuedCmdIndex))
 
@@ -437,7 +427,7 @@ def moveConveyer(api, is_enabled, speed):
 def enableLinearRail(api, state):
     api.SetDeviceWithL.argtypes = [
         ctypes.c_bool,
-        ctypes.c_int,    # <--- This is VERSION, not isQueued
+        ctypes.c_int,    
         ctypes.POINTER(ctypes.c_uint64)
     ]
     api.SetDeviceWithL.restype = ctypes.c_int
@@ -623,7 +613,7 @@ def readIRSensor(api, portNum):
 
 
 def wait(api, target_index):
-   # If the command failed to queue (index 0), don't wait forever.
+
     if target_index == 0:
         print("Warning: Wait called on Index 0 (Command failed?)")
         return
@@ -639,7 +629,7 @@ def wait(api, target_index):
             print("I am free...pata nahi kyu")
             print(
                 f"Current index{current_index.value} and target index{target_index}")
-            break  # Error reading
+            break  
 
         if current_index.value >= target_index:
             print("I am free...")
