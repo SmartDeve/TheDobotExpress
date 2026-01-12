@@ -280,8 +280,8 @@ def setGripper(api, enable, state):
 
 def setSuction(api, enable, state):
     api.SetEndEffectorSuctionCup.argtypes = [
-        ctypes.c_bool,                   # enableCtrl (Must be True to work)
-        # enable (True=ON/Suck, False=OFF/Release)
+        ctypes.c_bool,                   
+       
         ctypes.c_bool,
         ctypes.c_bool,                   # isQueued
         ctypes.POINTER(ctypes.c_uint64)  # cmdIndex
