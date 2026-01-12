@@ -68,7 +68,7 @@ The diagram below illustrates the internal architecture and workflow of DobotExp
 * **enableColorSensor(state,port)**: To enable/disable the color sensor connnected to dobot's one of the GPIO pin. Make sure to give the exact pin number written against the GPIO number on the dobot. GPIO Number ≠ Pin number
 * **enableIRSensor(state,port)**: To enable/disable the IR sensor connnected to dobot's one of the GPIO pin. Make sure to give the exact pin number written against the GPIO number on the dobot. GPIO Number ≠ Pin number
 * **readIRSensor()**: To read IR Sensor value, make sure to enable IR sensor first.
-* **readColorSensor()**: To read color sensor value, make sure to enable IR sensor first
+* **readColorSensor()**: To read color sensor value, make sure to enable the color sensor first
 * **makeToWait(queueIndex)**: Make the dobot wait for the completion of a command.
 * **moveConveyer(distance)**: Move the conveyer of the dobot connected to the stepper motor.
 
